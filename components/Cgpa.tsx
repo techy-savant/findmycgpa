@@ -102,7 +102,7 @@ export default function CGPAConverter({
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+    <div className=" min-h-screen-minus-65 bg-gray-100 flex items-center justify-center p-4">
       <Card className="w-full max-w-2xl">
         <CardHeader>
           <CardTitle className="text-3xl font-bold text-center text-gray-800">
