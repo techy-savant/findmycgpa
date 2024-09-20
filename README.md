@@ -10,8 +10,7 @@
   Calculate and convert your CGPA with ease.
 </p>
 
-
-![CryptHive](https://github.com/techy-savant/CryptHive/assets/108519575/668cf5fb-4c1f-4ccf-97b7-1aac935877f9)
+![CryptHive](https://github.com/user-attachments/assets/92bd7799-46e4-44bf-9492-ac7f76ced7a9)
 
 ## Technologies Used
 
@@ -21,7 +20,7 @@
 - Shadcn-ui
 - Lucide React
 
- **Live Site** » [CryptHive Site](https://crypt-hive.vercel.app/)
+ **Live Site** » [findmycgpa.vercel.app](https://findmycgpa.vercel.app/)
 
 ## Development
 
