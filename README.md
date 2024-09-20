@@ -27,9 +27,9 @@
 To get a local copy of the code, clone it using git:
 
 ```
-git clone https://github.com/techy-savant/CryptHive.git
+git clone https://github.com/techy-savant/findmycgpa.git
 
-cd CryptHive
+cd findmycgpa
 ```
 
 Install dependencies:
