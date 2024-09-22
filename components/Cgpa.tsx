@@ -36,6 +36,7 @@ const CGPA = ({ defaultTab = "calculate" }: { defaultTab?: TabValue }) => {
   const [activeTab, setActiveTab] = useState<TabValue>(defaultTab);
   const [showCalculatedResult, setShowCalculatedResult] = useState(false);
   const [showConvertedResult, setShowConvertedResult] = useState(false);
+  const [isSelectOpen, setIsSelectOpen] = useState(false);
 
   const calculateCGPA = () => {
     const totalCredits = courses.reduce(
@@ -159,6 +160,7 @@ const CGPA = ({ defaultTab = "calculate" }: { defaultTab?: TabValue }) => {
                         onValueChange={(value) =>
                           updateCourse(index, "grade", value)
                         }
+                        onOpenChange={(open) => setIsSelectOpen(open)}
                       >
                         <SelectTrigger id={`grade-${index}`}>
                           <SelectValue placeholder="Select grade" />
@@ -192,10 +194,15 @@ const CGPA = ({ defaultTab = "calculate" }: { defaultTab?: TabValue }) => {
                   onClick={addCourse}
                   variant="outline"
                   className="w-full"
+                  disabled={isSelectOpen}
                 >
                   Add Course
                 </Button>
-                <Button onClick={calculateCGPA} className="w-full">
+                <Button
+                  onClick={calculateCGPA}
+                  className="w-full"
+                  disabled={isSelectOpen}
+                >
                   Calculate CGPA
                 </Button>
                 {showCalculatedResult && cgpa !== null && (
