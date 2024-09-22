@@ -22,18 +22,17 @@ import {
 import Image from "next/image";
 
 type TabValue = "calculate" | "convert";
+type ScaleValue = "4.0" | "5.0";
 
-export default function CGPAConverter({
-  defaultTab = "calculate",
-}: {
-  defaultTab?: TabValue;
-}) {
+const initialCourseState = [{ grade: "", credits: 0 }];
+
+const CGPA = ({ defaultTab = "calculate" }: { defaultTab?: TabValue }) => {
   const [cgpa, setCGPA] = useState<number | null>(null);
   const [convertedCGPA, setConvertedCGPA] = useState<number | null>(null);
-  const [courses, setCourses] = useState<{ grade: string; credits: number }[]>([
-    { grade: "", credits: 0 },
-  ]);
-  const [fromScale, setFromScale] = useState<"4.0" | "5.0">("4.0");
+  const [courses, setCourses] =
+    useState<{ grade: string; credits: number }[]>(initialCourseState);
+  const [fromScale, setFromScale] = useState<ScaleValue>("4.0");
+  const [calculateScale, setCalculateScale] = useState<ScaleValue>("4.0");
   const [activeTab, setActiveTab] = useState<TabValue>(defaultTab);
   const [showCalculatedResult, setShowCalculatedResult] = useState(false);
   const [showConvertedResult, setShowConvertedResult] = useState(false);
@@ -44,28 +43,25 @@ export default function CGPAConverter({
       0
     );
     const totalGradePoints = courses.reduce((sum, course) => {
-      const gradePoint = getGradePoint(course.grade);
+      const gradePoint = getGradePoint(course.grade, calculateScale);
       return sum + gradePoint * course.credits;
     }, 0);
-    setCGPA(totalGradePoints / totalCredits);
+    const calculatedCGPA = totalGradePoints / totalCredits;
+    setCGPA(Number(calculatedCGPA.toFixed(4))); // Keep internal precision at 4 decimal places
     setShowCalculatedResult(true);
+    setCourses(initialCourseState);
   };
 
-  const getGradePoint = (grade: string): number => {
-    const gradePoints: { [key: string]: number } = {
-      A: 4.0,
-      "A-": 3.7,
-      "B+": 3.3,
-      B: 3.0,
-      "B-": 2.7,
-      "C+": 2.3,
-      C: 2.0,
-      "C-": 1.7,
-      "D+": 1.3,
-      D: 1.0,
-      F: 0.0,
+  const getGradePoint = (grade: string, scale: ScaleValue): number => {
+    const gradePoints: { [key: string]: { [key in ScaleValue]: number } } = {
+      A: { "4.0": 4.0, "5.0": 5.0 },
+      B: { "4.0": 3.0, "5.0": 4.0 },
+      C: { "4.0": 2.0, "5.0": 3.0 },
+      D: { "4.0": 1.0, "5.0": 2.0 },
+      E: { "4.0": 0.5, "5.0": 1.0 },
+      F: { "4.0": 0.0, "5.0": 0.0 },
     };
-    return gradePoints[grade.toUpperCase()] || 0;
+    return gradePoints[grade.toUpperCase()]?.[scale] || 0;
   };
 
   const addCourse = () => {
@@ -87,11 +83,13 @@ export default function CGPAConverter({
 
   const convertCGPA = () => {
     if (cgpa === null) return;
+    let convertedValue: number;
     if (fromScale === "4.0") {
-      setConvertedCGPA((cgpa / 4) * 5);
+      convertedValue = (cgpa / 4) * 5;
     } else {
-      setConvertedCGPA((cgpa / 5) * 4);
+      convertedValue = (cgpa / 5) * 4;
     }
+    setConvertedCGPA(Number(convertedValue.toFixed(4))); // Keep internal precision at 4 decimal places
     setShowConvertedResult(true);
   };
 
@@ -102,7 +100,7 @@ export default function CGPAConverter({
   };
 
   return (
-    <div className=" min-h-screen-minus-65 bg-gray-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
       <Card className="w-full max-w-2xl">
         <CardHeader>
           <CardTitle className="text-3xl font-bold text-center text-gray-800">
@@ -135,18 +133,45 @@ export default function CGPAConverter({
             </TabsList>
             <TabsContent value="calculate">
               <div className="space-y-4">
+                <div>
+                  <Label htmlFor="calculate-scale">Scale</Label>
+                  <Select
+                    value={calculateScale}
+                    onValueChange={(value: ScaleValue) =>
+                      setCalculateScale(value)
+                    }
+                  >
+                    <SelectTrigger id="calculate-scale">
+                      <SelectValue placeholder="Select scale" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="4.0">4.0</SelectItem>
+                      <SelectItem value="5.0">5.0</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
                 {courses.map((course, index) => (
                   <div key={index} className="flex space-x-4">
                     <div className="flex-1">
                       <Label htmlFor={`grade-${index}`}>Grade</Label>
-                      <Input
-                        id={`grade-${index}`}
+                      <Select
                         value={course.grade}
-                        onChange={(e) =>
-                          updateCourse(index, "grade", e.target.value)
+                        onValueChange={(value) =>
+                          updateCourse(index, "grade", value)
                         }
-                        placeholder="Enter grade (e.g., A, B+, C)"
-                      />
+                      >
+                        <SelectTrigger id={`grade-${index}`}>
+                          <SelectValue placeholder="Select grade" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="A">A</SelectItem>
+                          <SelectItem value="B">B</SelectItem>
+                          <SelectItem value="C">C</SelectItem>
+                          <SelectItem value="D">D</SelectItem>
+                          <SelectItem value="E">E</SelectItem>
+                          <SelectItem value="F">F</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
                     <div className="flex-1">
                       <Label htmlFor={`credits-${index}`}>Credits</Label>
@@ -191,16 +216,17 @@ export default function CGPAConverter({
                     max={fromScale === "4.0" ? "4" : "5"}
                     step="0.01"
                     placeholder="Enter your CGPA"
-                    onChange={(e) => setCGPA(parseFloat(e.target.value))}
+                    onChange={(e) =>
+                      setCGPA(Number(parseFloat(e.target.value).toFixed(4)))
+                    }
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="from-scale">From Scale</Label>
                     <Select
-                      onValueChange={(value) =>
-                        setFromScale(value as "4.0" | "5.0")
-                      }
+                      value={fromScale}
+                      onValueChange={(value: ScaleValue) => setFromScale(value)}
                     >
                       <SelectTrigger id="from-scale">
                         <SelectValue placeholder="Select scale" />
@@ -237,4 +263,6 @@ export default function CGPAConverter({
       </Card>
     </div>
   );
-}
+};
+
+export default CGPA;
