@@ -102,7 +102,7 @@ const CGPA = ({ defaultTab = "calculate" }: { defaultTab?: TabValue }) => {
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-      <Card className="w-full max-w-2xl">
+      <Card className="w-full max-w-3xl">
         <CardHeader>
           <CardTitle className="text-3xl font-bold text-center text-gray-800">
             <div className="flex flex-row justify-center items-center gap-1">
@@ -190,26 +190,28 @@ const CGPA = ({ defaultTab = "calculate" }: { defaultTab?: TabValue }) => {
                     </div>
                   </div>
                 ))}
-                <Button
-                  onClick={addCourse}
-                  variant="outline"
-                  className="w-full"
-                  disabled={isSelectOpen}
-                >
-                  Add Course
-                </Button>
-                <Button
-                  onClick={calculateCGPA}
-                  className="w-full"
-                  disabled={isSelectOpen}
-                >
-                  Calculate CGPA
-                </Button>
-                {showCalculatedResult && cgpa !== null && (
-                  <div className="text-center text-xl font-semibold text-gray-800">
-                    Your CGPA: {cgpa.toFixed(2)}
-                  </div>
-                )}
+                <div className= {`${isSelectOpen && " max-sm:pt-[195px]"}`}>
+                  <Button
+                    onClick={addCourse}
+                    variant="outline"
+                    className="w-full"
+                    disabled={isSelectOpen}
+                  >
+                    Add Course
+                  </Button>
+                  <Button
+                    onClick={calculateCGPA}
+                    className="w-full"
+                    disabled={isSelectOpen}
+                  >
+                    Calculate CGPA
+                  </Button>
+                  {showCalculatedResult && cgpa !== null && (
+                    <div className="text-center text-xl font-semibold text-gray-800">
+                      Your CGPA: {cgpa.toFixed(2)}
+                    </div>
+                  )}
+                </div>
               </div>
             </TabsContent>
             <TabsContent value="convert">
