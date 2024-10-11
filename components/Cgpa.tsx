@@ -190,7 +190,7 @@ const CGPA = ({ defaultTab = "calculate" }: { defaultTab?: TabValue }) => {
                     </div>
                   </div>
                 ))}
-                <div className= {`${isSelectOpen && " max-sm:pt-[195px]"}`}>
+                <div className={`${isSelectOpen && " max-sm:pt-[195px]"}`}>
                   <Button
                     onClick={addCourse}
                     variant="outline"
@@ -236,6 +236,7 @@ const CGPA = ({ defaultTab = "calculate" }: { defaultTab?: TabValue }) => {
                     <Select
                       value={fromScale}
                       onValueChange={(value: ScaleValue) => setFromScale(value)}
+                      onOpenChange={(open) => setIsSelectOpen(open)}
                     >
                       <SelectTrigger id="from-scale">
                         <SelectValue placeholder="Select scale" />
@@ -257,14 +258,16 @@ const CGPA = ({ defaultTab = "calculate" }: { defaultTab?: TabValue }) => {
                     </Select>
                   </div>
                 </div>
-                <Button onClick={convertCGPA} className="w-full">
-                  Convert CGPA
-                </Button>
-                {showConvertedResult && convertedCGPA !== null && (
-                  <div className="text-center text-xl font-semibold text-gray-800">
-                    Converted CGPA: {convertedCGPA.toFixed(2)}
-                  </div>
-                )}
+                <div className={`${isSelectOpen && " max-sm:pt-[90px]"}`}>
+                  <Button onClick={convertCGPA} className="w-full">
+                    Convert CGPA
+                  </Button>
+                  {showConvertedResult && convertedCGPA !== null && (
+                    <div className="text-center text-xl font-semibold text-gray-800">
+                      Converted CGPA: {convertedCGPA.toFixed(2)}
+                    </div>
+                  )}
+                </div>
               </div>
             </TabsContent>
           </Tabs>
