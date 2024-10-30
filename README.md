@@ -20,7 +20,7 @@
 - Shadcn-ui
 - Lucide React
 
- **Live Site** » [findmycgpa.vercel.app](https://findmycgpa.site)
+ **Live Site** » [findmycgpa.site](https://findmycgpa.site)
 
 ## Development
 
