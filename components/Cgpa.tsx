@@ -94,6 +94,9 @@ const CGPA = ({ defaultTab = "calculate" }: { defaultTab?: TabValue }) => {
     setShowConvertedResult(true);
   };
 
+  const isCalculateCGPABtnDisabled = courses.some((course) => course.grade === "" || course.credits === 0);
+  const isConvertCGPABtnDisabled = cgpa === null || cgpa === undefined;
+
   const handleTabChange = (value: TabValue) => {
     setActiveTab(value);
     setShowCalculatedResult(false);
@@ -202,10 +205,11 @@ const CGPA = ({ defaultTab = "calculate" }: { defaultTab?: TabValue }) => {
                   <Button
                     onClick={calculateCGPA}
                     className="w-full"
-                    disabled={isSelectOpen}
+                    disabled={isSelectOpen || isCalculateCGPABtnDisabled}
                   >
                     Calculate CGPA
                   </Button>
+                  
                   {showCalculatedResult && cgpa !== null && (
                     <div className="text-center text-xl font-semibold text-gray-800">
                       Your CGPA: {cgpa.toFixed(2)}
@@ -259,7 +263,7 @@ const CGPA = ({ defaultTab = "calculate" }: { defaultTab?: TabValue }) => {
                   </div>
                 </div>
                 <div className={`${isSelectOpen && " max-sm:pt-[90px]"}`}>
-                  <Button onClick={convertCGPA} className="w-full">
+                  <Button onClick={convertCGPA} disabled={isConvertCGPABtnDisabled} className="w-full">
                     Convert CGPA
                   </Button>
                   {showConvertedResult && convertedCGPA !== null && (
