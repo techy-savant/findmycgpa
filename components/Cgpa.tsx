@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Card,
@@ -37,6 +37,13 @@ const CGPA = ({ defaultTab = "calculate" }: { defaultTab?: TabValue }) => {
   const [showCalculatedResult, setShowCalculatedResult] = useState(false);
   const [showConvertedResult, setShowConvertedResult] = useState(false);
   const [isSelectOpen, setIsSelectOpen] = useState(false);
+
+  useEffect(() => {
+    if (activeTab === "convert") {
+      setCGPA(null);
+      setConvertedCGPA(null);
+    }
+  }, [activeTab]);
 
   const calculateCGPA = () => {
     const totalCredits = courses.reduce(
@@ -94,7 +101,9 @@ const CGPA = ({ defaultTab = "calculate" }: { defaultTab?: TabValue }) => {
     setShowConvertedResult(true);
   };
 
-  const isCalculateCGPABtnDisabled = courses.some((course) => course.grade === "" || course.credits === 0);
+  const isCalculateCGPABtnDisabled = courses.some(
+    (course) => course.grade === "" || course.credits === 0
+  );
   const isConvertCGPABtnDisabled = cgpa === null || cgpa === undefined;
 
   const handleTabChange = (value: TabValue) => {
@@ -209,7 +218,7 @@ const CGPA = ({ defaultTab = "calculate" }: { defaultTab?: TabValue }) => {
                   >
                     Calculate CGPA
                   </Button>
-                  
+
                   {showCalculatedResult && cgpa !== null && (
                     <div className="text-center text-xl font-semibold text-gray-800">
                       Your CGPA: {cgpa.toFixed(2)}
@@ -263,7 +272,11 @@ const CGPA = ({ defaultTab = "calculate" }: { defaultTab?: TabValue }) => {
                   </div>
                 </div>
                 <div className={`${isSelectOpen && " max-sm:pt-[90px]"}`}>
-                  <Button onClick={convertCGPA} disabled={isConvertCGPABtnDisabled} className="w-full">
+                  <Button
+                    onClick={convertCGPA}
+                    disabled={isConvertCGPABtnDisabled}
+                    className="w-full"
+                  >
                     Convert CGPA
                   </Button>
                   {showConvertedResult && convertedCGPA !== null && (
